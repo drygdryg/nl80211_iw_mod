@@ -645,6 +645,26 @@ COMMAND(set, mcast_rate, "<rate in Mbps>",
 	NL80211_CMD_SET_MCAST_RATE, 0, CIB_NETDEV, set_mcast_rate,
 	"Set the multicast bitrate.");
 
+static int set_filter(struct nl80211_state *state, struct nl_msg *msg,
+		      int argc, char **argv, enum id_input id)
+{
+	int fd;
+	char *end;
+
+	if (argc != 1)
+		return 1;
+
+	fd = strtol(argv[0], &end, 0);
+	if (*end)
+		return 1;
+	NLA_PUT_U32(msg, NL80211_ATTR_BPF_FD, fd);
+	return 0;
+nla_put_failure:
+	return -ENOBUFS;
+}
+COMMAND(set, filter, "<fd>",
+	NL80211_CMD_SET_INTERFACE, 0, CIB_NETDEV, set_filter,
+	"set monitor interface filter FD");
 
 static int handle_chanfreq(struct nl80211_state *state, struct nl_msg *msg,
 			   bool chan, int argc, char **argv,

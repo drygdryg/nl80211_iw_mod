@@ -2012,6 +2012,8 @@ enum nl80211_commands {
  *	u32 attribute with an &enum nl80211_timeout_reason value. This is used,
  *	e.g., with %NL80211_CMD_CONNECT event.
  *
+ * @NL80211_ATTR_BPF_FD: BPF file descriptor (s32), use -1 to remove a program
+ *
  * @NUM_NL80211_ATTR: total number of nl80211_attrs available
  * @NL80211_ATTR_MAX: highest attribute number currently defined
  * @__NL80211_ATTR_AFTER_LAST: internal use
@@ -2422,6 +2424,8 @@ enum nl80211_attrs {
 	NL80211_ATTR_SCHED_SCAN_RSSI_ADJUST,
 
 	NL80211_ATTR_TIMEOUT_REASON,
+
+	NL80211_ATTR_BPF_FD,
 
 	/* add attributes here, update the policy in nl80211.c */
 
@@ -3942,10 +3946,7 @@ enum nl80211_ps_state {
  * @__NL80211_ATTR_CQM_INVALID: invalid
  * @NL80211_ATTR_CQM_RSSI_THOLD: RSSI threshold in dBm. This value specifies
  *	the threshold for the RSSI level at which an event will be sent. Zero
- *	to disable.  Alternatively, if %NL80211_EXT_FEATURE_CQM_RSSI_LIST is
- *	set, multiple values can be supplied as a low-to-high sorted array of
- *	threshold values in dBm.  Events will be sent when the RSSI value
- *	crosses any of the thresholds.
+ *	to disable.
  * @NL80211_ATTR_CQM_RSSI_HYST: RSSI hysteresis in dBm. This value specifies
  *	the minimum amount the RSSI level must change after an event before a
  *	new event may be issued (to reduce effects of RSSI oscillation).
@@ -4756,9 +4757,8 @@ enum nl80211_feature_flags {
  * @NL80211_EXT_FEATURE_SCHED_SCAN_RELATIVE_RSSI: The driver supports sched_scan
  *	for reporting BSSs with better RSSI than the current connected BSS
  *	(%NL80211_ATTR_SCHED_SCAN_RELATIVE_RSSI).
- * @NL80211_EXT_FEATURE_CQM_RSSI_LIST: With this driver the
- *	%NL80211_ATTR_CQM_RSSI_THOLD attribute accepts a list of zero or more
- *	RSSI threshold values to monitor rather than exactly one threshold.
+ * @NL80211_EXT_FEATURE_WIFIMON_BPF: supports running BPF filter programs
+ *	for frames seen on monitor interfaces
  *
  * @NUM_NL80211_EXT_FEATURES: number of extended features.
  * @MAX_NL80211_EXT_FEATURES: highest extended feature index.
@@ -4777,7 +4777,7 @@ enum nl80211_ext_feature_index {
 	NL80211_EXT_FEATURE_MGMT_TX_RANDOM_TA,
 	NL80211_EXT_FEATURE_MGMT_TX_RANDOM_TA_CONNECTED,
 	NL80211_EXT_FEATURE_SCHED_SCAN_RELATIVE_RSSI,
-	NL80211_EXT_FEATURE_CQM_RSSI_LIST,
+	NL80211_EXT_FEATURE_WIFIMON_BPF,
 
 	/* add new features before the definition below */
 	NUM_NL80211_EXT_FEATURES,
@@ -4913,17 +4913,12 @@ enum nl80211_smps_mode {
  *	change to the channel status.
  * @NL80211_RADAR_NOP_FINISHED: The Non-Occupancy Period for this channel is
  *	over, channel becomes usable.
- * @NL80211_RADAR_PRE_CAC_EXPIRED: Channel Availability Check done on this
- *	non-operating channel is expired and no longer valid. New CAC must
- *	be done on this channel before starting the operation. This is not
- *	applicable for ETSI dfs domain where pre-CAC is valid for ever.
  */
 enum nl80211_radar_event {
 	NL80211_RADAR_DETECTED,
 	NL80211_RADAR_CAC_FINISHED,
 	NL80211_RADAR_CAC_ABORTED,
 	NL80211_RADAR_NOP_FINISHED,
-	NL80211_RADAR_PRE_CAC_EXPIRED,
 };
 
 /**
