@@ -1981,8 +1981,9 @@ static void print_wifi_wps(const uint8_t type, uint8_t len, const uint8_t *data,
 				uint8_t v2 = data[9];
 				printf("\t * Version2: %d.%d\n", v2 >> 4, v2 & 0xf);
 			} else {
-				printf("\t * Unknown vendor extension. len=%u\n",
-				       sublen);
+				printf("\t * Unknown vendor extension (len=%u):", sublen);
+				for (int i = 0; i < sublen; i++) printf(" %.2x", data[i + 4]);
+				printf("\n");
 			}
 			break;
 		case 0x1054: {
