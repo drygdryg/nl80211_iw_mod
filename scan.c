@@ -2338,6 +2338,11 @@ void print_ies(unsigned char *ie, int ielen, bool unknown,
 				printf(" %.2x", ie[2+i]);
 			printf("\n");
 		}
+		if (unknown) {
+			printf("\t - raw IE (type: 0x%.2x, length: %d):", ie[0], ie[1]);
+			for (int i = 0; i < (ie[1] + 2); i++) printf(" %.2x", ie[i]);
+			printf("\n");
+		}
 		ielen -= ie[1] + 2;
 		ie += ie[1] + 2;
 	}
